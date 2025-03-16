@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Search{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+    <h2>Admin Search</h2>
+
+    <!-- Search Form -->
+    <div class="row mb-4">
+        <div class="col-md-8 mx-auto">
+            <form action="{{ url_for('admin_search') }}" method="GET" class="d-flex">
+                <input type="text" name="q" class="form-control me-2" 
+                       placeholder="Search users, subjects, chapters, or quizzes..." 
+                       value="{{ search_query }}">
+                <button type="submit" class="btn btn-primary">Search</button>
+            </form>
+        </div>
+    </div>
+
+    {% if search_query %}
+        <h4 class="mt-3">Search Results for "{{ search_query }}"</h4>
+
+        <div class="row">
+            <!-- Users Section -->
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Users</h5>
+                        <span class="badge bg-secondary">{{ users|length }}</span>
+                    </div>
+                    <div class="card-body">
+                        {% if users %}
+                            <ul class="list-group list-group-flush">
+                                {% for user in users %}
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-0">{{ user.fullname }}</h6>
+                                            <small class="text-muted">Email: {{ user.email }}</small>
+                                        </div>
+                                        <div>
+                                            <a href="{{ url_for('view_user', user_id=user.id) }}" class="btn btn-sm btn-info">View</a>
+                                            <a href="{{ url_for('edit_user', user_id=user.id) }}" class="btn btn-sm btn-warning">Edit</a>
+                                            <a href="{{ url_for('delete_user', user_id=user.id) }}" class="btn btn-sm btn-danger">Delete</a>
+                                        </div>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p class="text-muted">No users found.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Subjects Section -->
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Subjects</h5>
+                        <span class="badge bg-secondary">{{ subjects|length }}</span>
+                    </div>
+                    <div class="card-body">
+                        {% if subjects %}
+                            <ul class="list-group list-group-flush">
+                                {% for subject in subjects %}
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-0">{{ subject.name }}</h6>
+                                        </div>
+                                        <div>
+                                            <a href="{{ url_for('edit_subject', subject_id=subject.id) }}" class="btn btn-sm btn-warning">Edit</a>
+                                            <a href="{{ url_for('delete_subject', subject_id=subject.id) }}" class="btn btn-sm btn-danger">Delete</a>
+                                        </div>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p class="text-muted">No subjects found.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chapters Section -->
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Chapters</h5>
+                        <span class="badge bg-secondary">{{ chapters|length }}</span>
+                    </div>
+                    <div class="card-body">
+                        {% if chapters %}
+                            <ul class="list-group list-group-flush">
+                                {% for chapter in chapters %}
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-0">{{ chapter.name }}</h6>
+                                            <small class="text-muted">Subject: {{ chapter.subject.name }}</small>
+                                        </div>
+                                        <div>
+                                            <a href="{{ url_for('view_chapter', chapter_id=chapter.id) }}" class="btn btn-sm btn-info">View</a>
+                                            <a href="{{ url_for('edit_chapter', subject_id=chapter.subject.id) }}" class="btn btn-sm btn-warning">Edit</a>
+                                            <a href="{{ url_for('delete_chapter', chapter_id=chapter.id) }}" class="btn btn-sm btn-danger">Delete</a>
+                                        </div>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p class="text-muted">No chapters found.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quizzes Section -->
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Quizzes</h5>
+                        <span class="badge bg-secondary">{{ quizzes|length }}</span>
+                    </div>
+                    <div class="card-body">
+                        {% if quizzes %}
+                            <ul class="list-group list-group-flush">
+                                {% for quiz in quizzes %}
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-0">{{ quiz.remarks }}</h6>
+                                            <small class="text-muted">Chapter: {{ quiz.chapter.name }}</small>
+                                        </div>
+                                        <div>
+                                            <a href="{{ url_for('view_quiz', quiz_id=quiz.id) }}" class="btn btn-sm btn-info">View</a>
+                                            <a href="{{ url_for('edit_quiz', quiz_id=quiz.id) }}" class="btn btn-sm btn-warning">Edit</a>
+                                            <a href="{{ url_for('delete_quiz', quiz_id=quiz.id) }}" class="btn btn-sm btn-danger">Delete</a>
+                                        </div>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p class="text-muted">No quizzes found.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <p class="text-muted text-center">Enter a search term to see results.</p>
+    {% endif %}
+</div>
+{% endblock %}

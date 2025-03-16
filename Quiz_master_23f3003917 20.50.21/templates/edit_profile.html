@@ -1,0 +1,183 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    body {
+        background-image: url('https://source.unsplash.com/1600x900/?profile,technology');
+        background-size: cover;
+        background-position: center;
+        font-family: 'Poppins', sans-serif;
+        animation: fadeIn 1s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .container {
+        max-width: 700px;
+        margin-top: 50px;
+    }
+
+    .card {
+        background-color: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(15px);
+        border: none;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+        transition: all 0.5s;
+    }
+
+    .card:hover {
+        transform: scale(1.02);
+        box-shadow: 0 30px 70px rgba(0, 0, 0, 0.2);
+    }
+
+    .form-control, .form-select {
+        border-radius: 8px;
+        padding: 12px;
+        border: 1px solid #ddd;
+        transition: all 0.3s;
+    }
+
+    .form-control:focus {
+        border-color: #4CAF50;
+        box-shadow: 0 0 20px rgba(76, 175, 80, 0.4);
+        transform: scale(1.01);
+    }
+
+    .card-header {
+        background-color: #4CAF50;
+        border-radius: 15px 15px 0 0;
+        color: #fff;
+        text-align: center;
+        font-weight: bold;
+        letter-spacing: 1px;
+    }
+
+    .btn-success {
+        background-color: #4CAF50;
+        border: none;
+        border-radius: 25px;
+        padding: 12px 30px;
+        font-size: 18px;
+        transition: all 0.3s;
+    }
+
+    .btn-success:hover {
+        background-color: #388E3C;
+        transform: scale(1.05);
+        box-shadow: 0 10px 30px rgba(76, 175, 80, 0.4);
+    }
+
+    .btn-secondary {
+        border-radius: 25px;
+        padding: 12px 30px;
+        font-size: 18px;
+    }
+
+    /* Profile Image */
+    #profile-pic-container {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    #profile-pic {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 4px solid #4CAF50;
+        transition: all 0.3s;
+    }
+
+    #profile-pic:hover {
+        transform: scale(1.05);
+        box-shadow: 0 10px 30px rgba(76, 175, 80, 0.4);
+    }
+
+    input[type="file"] {
+        display: none;
+    }
+
+    .custom-file-upload {
+        background-color: #4CAF50;
+        color: #fff;
+        padding: 10px 20px;
+        border-radius: 25px;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .custom-file-upload:hover {
+        background-color: #388E3C;
+        transform: scale(1.05);
+    }
+
+    /* Smooth Scaling Effect on Input */
+    input[type="text"], input[type="email"], input[type="date"], input[type="password"] {
+        transition: transform 0.3s;
+    }
+
+    input[type="text"]:focus, input[type="email"]:focus, input[type="date"]:focus, input[type="password"]:focus {
+        transform: scale(1.03);
+    }
+</style>
+
+<div class="container">
+    <div class="card shadow-lg">
+        <div class="card-header">
+            <h3>📝 Edit Profile</h3>
+        </div>
+
+        <div class="card-body">
+            <!-- Profile Picture Section -->
+            <div id="profile-pic-container">
+                <img src="{{ user.profile_pic or url_for('static', filename='images/default.png') }}" id="profile-pic">
+                <br><br>
+                <label for="file-upload" class="custom-file-upload">
+                    📸 Upload New Profile Picture
+                </label>
+                <input type="file" id="file-upload" name="profile_pic" onchange="previewImage(event)">
+            </div>
+
+            <!-- Profile Form -->
+            <form method="POST" enctype="multipart/form-data">
+                <!-- Full Name -->
+                <div class="mb-3">
+                    <label>Full Name</label>
+                    <input type="text" name="full_name" class="form-control" value="{{ user.full_name }}" required>
+                </div>
+
+                <!-- Date of Birth -->
+                <div class="mb-3">
+                    <label>Date of Birth</label>
+                    <input type="date" name="dob" class="form-control" value="{{ user.dob }}" required>
+                </div>
+
+                <!-- Qualification -->
+                <div class="mb-3">
+                    <label>🎓 Qualification</label>
+                    <input type="text" name="qualification" class="form-control" value="{{ user.qualification }}" required>
+                </div>
+
+                <!-- Email Address -->
+                <div class="mb-3">
+                    <label>Email Address</label>
+                    <input type="email" name="email" class="form-control" value="{{ user.email }}" required>
+                </div>
+
+                <!-- Change Password -->
+                <div class="mb-3">
+                    <label>New Password (optional)</label>
+                    <input type="password" name="password" class="form-control">
+                    <small class="text-muted">Leave blank if you don't want to change password.</small>
+     

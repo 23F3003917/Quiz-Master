@@ -1,0 +1,271 @@
+openapi: 3.0.0
+info:
+  title: Quiz Master - V1 API
+  description: API documentation for the Quiz Master application.
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:5002
+    description: Local development server
+
+paths:
+  /api/admin/login:
+    post:
+      summary: Admin Login
+      description: Authenticate an admin user and generate a session token.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: "admin@example.com"
+                password:
+                  type: string
+                  format: password
+                  example: "admin123"
+      responses:
+        "200":
+          description: Successful login
+        "401":
+          description: Unauthorized - Invalid credentials
+
+  /api/user/register:
+    post:
+      summary: Register a new user
+      description: Allows users to create an account.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                full_name:
+                  type: string
+                  example: "John Doe"
+                email:
+                  type: string
+                  format: email
+                  example: "user@example.com"
+                password:
+                  type: string
+                  format: password
+                  example: "password123"
+      responses:
+        "201":
+          description: User registered successfully
+        "400":
+          description: Bad request - Invalid input data
+
+  /api/user/login:
+    post:
+      summary: User Login
+      description: Authenticate a user and return a session token.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: "user@example.com"
+                password:
+                  type: string
+                  format: password
+                  example: "password123"
+      responses:
+        "200":
+          description: Login successful
+        "401":
+          description: Unauthorized - Invalid credentials
+
+  /api/subjects:
+    get:
+      summary: Get all subjects
+      description: Retrieve a list of all available quiz subjects.
+      responses:
+        "200":
+          description: List of subjects returned successfully
+        "500":
+          description: Internal server error
+
+  /api/subjects/{subject_id}/chapters:
+    get:
+      summary: Get chapters by subject
+      description: Retrieve all chapters for a given subject.
+      parameters:
+        - name: subject_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Chapters retrieved successfully
+        "404":
+          description: Subject not found
+
+  /api/quiz/start:
+    post:
+      summary: Start a new quiz
+      description: Start a quiz by selecting a subject and chapter.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_id:
+                  type: integer
+                  example: 1
+                subject_id:
+                  type: integer
+                  example: 2
+                chapter_id:
+                  type: integer
+                  example: 5
+      responses:
+        "200":
+          description: Quiz started successfully
+        "400":
+          description: Bad request - Invalid input data
+
+  /api/quiz/{quiz_id}/questions:
+    get:
+      summary: Get quiz questions
+      description: Retrieve all questions for a specific quiz.
+      parameters:
+        - name: quiz_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Quiz questions retrieved successfully
+        "404":
+          description: Quiz not found
+
+  /api/quiz/{quiz_id}/submit:
+    post:
+      summary: Submit quiz answers
+      description: Submit user responses for a quiz and calculate the score.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_id:
+                  type: integer
+                  example: 1
+                answers:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      question_id:
+                        type: integer
+                        example: 10
+                      answer:
+                        type: string
+                        example: "B"
+      responses:
+        "200":
+          description: Quiz submitted successfully with score
+        "400":
+          description: Bad request - Missing or incorrect data
+
+  /api/admin/subjects:
+    post:
+      summary: Add a new subject
+      description: Admin can create new subjects for quizzes.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                subject_name:
+                  type: string
+                  example: "Mathematics"
+      responses:
+        "201":
+          description: Subject created successfully
+        "403":
+          description: Forbidden - Admin access required
+
+  /api/admin/chapters:
+    post:
+      summary: Add a new chapter
+      description: Admin can create chapters under subjects.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                subject_id:
+                  type: integer
+                  example: 3
+                chapter_name:
+                  type: string
+                  example: "Algebra"
+      responses:
+        "201":
+          description: Chapter created successfully
+        "403":
+          description: Forbidden - Admin access required
+
+  /api/admin/questions:
+    post:
+      summary: Add quiz questions
+      description: Admin can add questions to a quiz chapter.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                chapter_id:
+                  type: integer
+                  example: 5
+                question_text:
+                  type: string
+                  example: "What is 2 + 2?"
+                options:
+                  type: array
+                  items:
+                    type: string
+                  example: ["2", "3", "4", "5"]
+                correct_answer:
+                  type: string
+                  example: "4"
+      responses:
+        "201":
+          description: Question added successfully
+        "403":
+          description: Forbidden - Admin access required
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+security:
+  - BearerAuth: []

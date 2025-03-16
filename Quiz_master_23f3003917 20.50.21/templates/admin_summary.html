@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Summary{% endblock %}
+
+{% block content %}
+    <h1 class="mb-4">Admin Summary</h1>
+
+    <div class="card p-3 mb-3">
+        <p><strong>Total Users:</strong> {{ total_users }}</p>
+        <p><strong>Total Subjects:</strong> {{ total_subject }}</p>
+        <p><strong>Total Scores:</strong> {{ total_scores }}</p>
+        <p><strong>Total Quizzes:</strong> {{ total_quizzes }}</p>
+    </div>
+
+    <div class="card p-3">
+        <h3>Quizzes Per Subject</h3>
+        <div id="quizChart"></div>
+    </div>
+
+    <!-- Load Plotly -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script>
+        var graphJSON = {{ graph_json | safe }};
+        Plotly.newPlot('quizChart', graphJSON.data, graphJSON.layout);
+    </script>
+{% endblock %}
+
+

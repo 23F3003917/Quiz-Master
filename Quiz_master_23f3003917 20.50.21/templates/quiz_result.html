@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Result - Quiz Master</title>
+    <style>
+        body {
+            background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+            font-family: 'Poppins', sans-serif;
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px;
+            width: 500px;
+            text-align: center;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        h2 {
+            color: #4CAF50;
+            font-size: 28px;
+        }
+
+        p {
+            font-size: 18px;
+            margin: 10px 0;
+        }
+
+        .score {
+            font-size: 32px;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+
+        .score span {
+            color: #4CAF50;
+        }
+
+        .btn {
+            display: inline-block;
+            text-decoration: none;
+            background-color: #007bff;
+            color: white;
+            padding: 12px 40px;
+            border-radius: 25px;
+            font-size: 18px;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background-color: #e0e0e0;
+            border-radius: 20px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 20px;
+            transition: width 1.5s;
+        }
+
+        /* Confetti Animation */
+        canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+
+        @keyframes fadeIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+    </style>
+</head>
+<body>
+
+<!-- Confetti Canvas -->
+<canvas id="confetti"></canvas>
+
+<div class="container">
+    <h2>🎉 Quiz Completed Successfully!</h2>
+    <p>You have successfully completed the quiz.</p>
+
+    <div class="score">
+        ✅ Your Score: <span>{{ attempt.score }}/{{ attempt.total }}</span>
+    </div>
+
+    <!-- Progress Bar -->
+    <div class="progress-bar">
+        <div class="progress-fill" id="progress"></div>
+    </div>
+
+    <!-- Dynamic Score Message -->
+    <p id="score-message"></p>
+
+    <a href="{{ url_for('user_dashboard') }}" class="btn">⬅ Back to Dashboard</a>
+</div>
+
+<script>
+    // Dynamic Score Percentage
+    const score = {{ attempt.score }};
+    const total = {{ attempt.total }};
+    const percentage = (score / total) * 100;
+
+    // Set Progress Bar Width
+    const progressBar = document.getElementById('progress');
+    progressBar.style.width = percentage + '%';
+
+    // Dynamic Message Based On Score
+    const message = document.getElementById('score-message');
+    if (percentage === 100) {
+        message.innerHTML = '🥳 Excellent! You scored a perfect 100%! 🎓';
+        startConfetti();  // Fire Confetti
+    } else if (percentage >= 75) {
+        message.innerHTML = '😎 Great Job! You did really well!';
+        startConfetti();
+    } else if (percentage >= 50) {
+        message.innerHTML = '🙂 Good effort! Keep practicing.';
+    } else {
+        message.innerHTML = '😕 You can do better next time. Don\'t give up!';
+    }
+
+    // Confetti Animation (Premium Touch)
+    function startConfetti() {
+        const canvas = document.getElementById('confetti');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const confetti = [];
+        for (let i = 0; i < 300; i++) {
+            confetti.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height - canvas.height,
+                r: Math.random() * 6 + 2,
+                d: Math.random() * 10 + 5,
+                color: `hsl(${Math.random() * 360}, 100%, 60%)`,
+                tilt: Math.random() * 10 - 5
+            });
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            confetti.forEach((p, i) => {
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                ctx.fillStyle = p.color;
+                ctx.fill();
+
+                p.y += p.d;
+                p.x += Math.sin(p.tilt);
+                if (p.y > canvas.height) {
+                    p.y = -10;
+                    p.x = Math.random() * canvas.width;
+                }
+            });
+
+            requestAnimationFrame(draw);
+        }
+        draw();
+    }
+</script>
+
+</body>
+</html>

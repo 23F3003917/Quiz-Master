@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %} Delete Chapter - Quiz Master {% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card shadow-lg">
+        <div class="card-header bg-danger text-white text-center">
+            <h3>Delete Chapter</h3>
+        </div>
+        <div class="card-body text-center">
+            <p class="fs-5">Are you sure you want to delete the chapter <strong>"{{ chapter.name }}"</strong>?</p>
+            <p class="text-danger">This action cannot be undone.</p>
+
+            <!-- Delete form -->
+            <form method="POST" action="{{ url_for('delete_chapter', chapter_id=chapter.id) }}">
+                <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

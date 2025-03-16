@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+
+{% block title %}Attempt Quiz - {{ quiz.title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    
+    <!-- Quiz Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h5 class="text-primary fw-bold">
+            📝 Attempting Quiz: {{ quiz.title }}
+        </h5>
+        <div class="text-danger fw-bold">
+            ⏳ Time Left: <span id="timer"></span>
+        </div>
+    </div>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <!-- Quiz Form -->
+    <form method="POST" action="{{ url_for('submit_quiz', quiz_id=quiz.id) }}" id="quizForm">
+        {% for question in questions %}
+        <div class="card shadow-sm mb-3">
+            <div class="card-header bg-light fw-bold">
+                <span class="text-dark">Q{{ loop.index }}:</span> {{ question.question_text }}
+            </div>
+            <div class="card-body">
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="question_{{ question.id }}" value="A" required>
+                    <label class="form-check-label">
+                        {{ question.option_a }}
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="question_{{ question.id }}" value="B" required>
+                    <label class="form-check-label">
+                        {{ question.option_b }}
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="question_{{ question.id }}" value="C" required>
+                    <label class="form-check-label">
+                        {{ question.option_c }}
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="question_{{ question.id }}" value="D" required>
+                    <label class="form-check-label">
+                        {{ question.option_d }}
+                    </label>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+
+        <!-- Submit Button -->
+        <div class="text-end">
+            <button type="submit" class="btn btn-success">
+                ✅ Submit Quiz
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- Timer Script -->
+<script>
+    // Timer Countdown
+    var totalTime = {{ quiz.duration }} * 60; // Convert minutes to seconds
+    var timerElement = document.getElementById('timer');
+
+    function updateTimer() {
+        var minutes = Math.floor(totalTime / 60);
+        var seconds = totalTime % 60;
+        timerElement.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+        totalTime--;
+
+        // Auto-submit when time expires
+        if (totalTime < 0) {
+            clearInterval(timerInterval);
+            document.getElementById('quizForm').submit();
+        }
+    }
+
+    // Update timer every second
+    var timerInterval = setInterval(updateTimer, 1000);
+
+    // Prevent Leaving Page Without Submission
+    window.onbeforeunload = function() {
+        return "Are you sure you want to leave the quiz? Your answers will be lost.";
+    }
+
+    // Disable unload warning after form submission
+    document.getElementById('quizForm').onsubmit = function() {
+        window.onbeforeunload = null;
+    }
+</script>
+
+<!-- SweetAlert for Confirmation -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    document.getElementById('quizForm').onsubmit = function(event) {
+        event.preventDefault();
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to change your answers after submitting.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, Submit it!',
+            cancelButtonText: 'No, Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                event.target.submit();
+            }
+        });
+    };
+</script>
+{% endblock %}

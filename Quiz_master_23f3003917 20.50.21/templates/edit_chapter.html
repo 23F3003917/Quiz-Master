@@ -1,0 +1,178 @@
+{% extends "base.html" %}
+
+{% block title %} Edit Chapter - Quiz Master {% endblock %}
+
+{% block content %}
+<style>
+    body {
+        background-image: url('https://source.unsplash.com/1600x900/?books,learning');
+        background-size: cover;
+        background-position: center;
+        font-family: 'Poppins', sans-serif;
+        animation: fadeIn 1s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .container {
+        max-width: 700px;
+        margin-top: 50px;
+    }
+
+    .card {
+        background-color: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(15px);
+        border: none;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+        transition: all 0.5s;
+    }
+
+    .card:hover {
+        transform: scale(1.02);
+        box-shadow: 0 30px 70px rgba(0, 0, 0, 0.2);
+    }
+
+    .form-control, .form-select {
+        border-radius: 8px;
+        padding: 12px;
+        border: 1px solid #ddd;
+        transition: all 0.3s;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: #f59e0b;
+        box-shadow: 0 0 20px rgba(245, 158, 11, 0.4);
+        transform: scale(1.01);
+    }
+
+    .card-header {
+        background-color: #f59e0b;
+        border-radius: 15px 15px 0 0;
+        color: #fff;
+        text-align: center;
+        font-weight: bold;
+        letter-spacing: 1px;
+    }
+
+    .btn-primary {
+        background-color: #f59e0b;
+        border: none;
+        border-radius: 25px;
+        padding: 12px 30px;
+        font-size: 18px;
+        transition: all 0.3s;
+    }
+
+    .btn-primary:hover {
+        background-color: #d97706;
+        transform: scale(1.05);
+        box-shadow: 0 10px 30px rgba(245, 158, 11, 0.4);
+    }
+
+    .btn-secondary {
+        border-radius: 25px;
+        padding: 12px 30px;
+        font-size: 18px;
+    }
+
+    /* Toast Notification */
+    .alert {
+        transition: all 0.5s;
+        opacity: 0.95;
+    }
+
+    .alert-dismissible .btn-close {
+        padding: 1rem;
+        font-size: 18px;
+    }
+
+    .form-select option:hover {
+        background-color: #f59e0b;
+        color: #fff;
+    }
+
+    /* Smooth Scale Effect on Input */
+    input[type="text"] {
+        transition: transform 0.3s;
+    }
+
+    input[type="text"]:focus {
+        transform: scale(1.03);
+    }
+
+    /* Back Button */
+    .back-btn {
+        background-color: transparent;
+        border: none;
+        color: #6c757d;
+        font-size: 16px;
+        transition: all 0.3s;
+    }
+
+    .back-btn:hover {
+        color: #f59e0b;
+        transform: scale(1.05);
+    }
+</style>
+
+<div class="container">
+    <div class="card shadow-lg">
+        <!-- Header Section -->
+        <div class="card-header">
+            <h3>✏️ Edit Chapter for {{ subject.name }}</h3>
+        </div>
+
+        <!-- Flash Messages -->
+        <div class="card-body">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+
+            <!-- Edit Chapter Form -->
+            <form method="POST" action="{{ url_for('edit_chapter', subject_id=subject.id) }}">
+                <!-- Select Chapter -->
+                <div class="mb-4">
+                    <label for="chapter_id" class="form-label">Select Chapter</label>
+                    <select class="form-select" id="chapter_id" name="chapter_id" required>
+                        <option value="" disabled selected>📖 Choose a Chapter...</option>
+                        {% for chapter in subject.chapters %}
+                        <option value="{{ chapter.id }}">{{ chapter.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Enter New Chapter Name -->
+                <div class="mb-4">
+                    <label for="name" class="form-label">New Chapter Name</label>
+                    <input type="text" class="form-control" id="name" name="name" placeholder="Enter new chapter name" required>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="d-flex justify-content-end">
+                    <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary me-2">❌ Cancel</a>
+                    <button type="submit" class="btn btn-primary">💾 Update Chapter</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

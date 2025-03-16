@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h4>Search Results for "{{ request.form.get('search_query') }}"</h4>
+
+    {% if quizzes %}
+        <table class="table table-bordered mt-4">
+            <thead class="table-dark">
+                <tr>
+                    <th>Quiz Name</th>
+                    <th>Subject</th>
+                    <th>Chapter</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for quiz in quizzes %}
+                <tr>
+                    <td>{{ quiz.name }}</td>
+                    <td>{{ quiz.chapter.subject.name }}</td>
+                    <td>{{ quiz.chapter.name }}</td>
+                    <td>
+                        {% if quiz.id in attempted_quiz_ids %}
+                            <a href="{{ url_for('quiz_result', quiz_id=quiz.id) }}" class="btn btn-success btn-sm">
+                                View Result
+                            </a>
+                        {% else %}
+                            <a href="{{ url_for('start_quiz', quiz_id=quiz.id) }}" class="btn btn-primary btn-sm">
+                                Attempt Quiz
+                            </a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <div class="alert alert-danger">
+            No quizzes found for "<strong>{{ request.form.get('search_query') }}</strong>"
+        </div>
+    {% endif %}
+
+    <a href="{{ url_for('user_dashboard') }}" class="btn btn-secondary mt-3">Back to Dashboard</a>
+</div>
+{% endblock %}

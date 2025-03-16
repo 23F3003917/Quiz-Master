@@ -1,0 +1,164 @@
+{% extends "base.html" %}
+
+{% block title %} Edit Subject - Quiz Master {% endblock %}
+
+{% block content %}
+<style>
+    body {
+        background-image: url('https://source.unsplash.com/1600x900/?education,books');
+        background-size: cover;
+        background-position: center;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .container {
+        max-width: 700px;
+        margin-top: 40px;
+    }
+
+    .card {
+        background-color: rgba(255, 255, 255, 0.9);
+        border-radius: 15px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s;
+    }
+
+    .card:hover {
+        transform: scale(1.02);
+    }
+
+    .card-header {
+        background-color: #4caf50;
+        color: white;
+        border-radius: 15px 15px 0 0;
+        text-align: center;
+        font-weight: bold;
+    }
+
+    .form-control {
+        border-radius: 8px;
+        padding: 12px;
+    }
+
+    textarea {
+        resize: none;
+        height: 100px;
+    }
+
+    textarea:focus, input:focus {
+        box-shadow: 0 10px 30px rgba(76, 175, 80, 0.3);
+        border-color: #4caf50;
+        transform: scale(1.01);
+    }
+
+    #subject-name-preview {
+        background-color: #e8f5e9;
+        border-left: 5px solid #4caf50;
+        padding: 15px;
+        border-radius: 10px;
+        font-size: 18px;
+        font-weight: bold;
+        color: #333;
+        transition: all 0.3s;
+    }
+
+    #subject-name-preview:hover {
+        background-color: #c8e6c9;
+        transform: scale(1.01);
+    }
+
+    .btn-success {
+        background-color: #4caf50;
+        border: none;
+        border-radius: 25px;
+        padding: 12px 40px;
+        font-size: 18px;
+        transition: all 0.3s;
+    }
+
+    .btn-success:hover {
+        background-color: #388e3c;
+        transform: scale(1.05);
+        box-shadow: 0 10px 30px rgba(76, 175, 80, 0.4);
+    }
+
+    .btn-secondary {
+        border-radius: 25px;
+        padding: 12px 30px;
+        font-size: 18px;
+    }
+
+    #char-count {
+        font-size: 14px;
+        color: #888;
+        float: right;
+    }
+</style>
+
+<div class="container">
+    <div class="card shadow-lg border-0 rounded">
+        <div class="card-header">
+            📖 Edit Subject
+        </div>
+        <div class="card-body">
+            <form method="POST" action="{{ url_for('edit_subject', subject_id=subject.id) }}">
+                
+                <!-- Subject Name -->
+                <div class="mb-3">
+                    <label for="subject" class="form-label">Subject Name</label>
+                    <input type="text" class="form-control" id="subject" name="subject" value="{{ subject.name }}" required oninput="updateSubjectName()">
+                </div>
+
+                <!-- Live Subject Name Preview -->
+                <div class="mb-4">
+                    <h6>📢 Subject Name Preview:</h6>
+                    <div id="subject-name-preview">
+                        {{ subject.name }}
+                    </div>
+                </div>
+
+                <!-- Description -->
+                <div class="mb-3">
+                    <label for="description" class="form-label">Description</label>
+                    <textarea class="form-control" id="description" name="description" rows="3" required oninput="countChars()">{{ subject.description }}</textarea>
+                    <small id="char-count">0/300 characters</small>
+                </div>
+
+                <!-- Buttons -->
+                <div class="text-center">
+                    <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary me-2">❌ Cancel</a>
+                    <button type="submit" class="btn btn-success">💾 Update Subject</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Live Subject Name Preview
+    function updateSubjectName() {
+        const subjectName = document.getElementById('subject').value;
+        document.getElementById('subject-name-preview').innerText = subjectName;
+    }
+
+    // Character Counter for Description
+    function countChars() {
+        const description = document.getElementById('description').value;
+        const charCount = description.length;
+        document.getElementById('char-count').innerText = `${charCount}/300 characters`;
+
+        if (charCount > 300) {
+            document.getElementById('char-count').style.color = "red";
+        } else {
+            document.getElementById('char-count').style.color = "#888";
+        }
+    }
+
+    // Initialize on load
+    window.onload = function () {
+        updateSubjectName();
+        countChars();
+    }
+</script>
+
+{% endblock %}

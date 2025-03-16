@@ -1,0 +1,132 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    body {
+        background: linear-gradient(135deg, #f9d423 0%, #ff4e50 100%);
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .container {
+        margin-top: 50px;
+    }
+
+    .card {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        animation: fadeIn 1s ease-in-out;
+    }
+
+    .card h5 {
+        color: #fff;
+        font-size: 18px;
+        margin-bottom: 5px;
+    }
+
+    .card p {
+        color: #f8f9fa;
+        font-size: 16px;
+        margin-bottom: 15px;
+    }
+
+    .btn {
+        border-radius: 50px;
+        padding: 10px 20px;
+        font-weight: bold;
+        transition: all 0.3s;
+    }
+
+    .btn-warning {
+        background-color: #ff9800;
+        color: white;
+        border: none;
+        box-shadow: 0 10px 30px rgba(255, 152, 0, 0.4);
+    }
+
+    .btn-warning:hover {
+        background-color: #e68900;
+        transform: scale(1.05);
+    }
+
+    .btn-secondary {
+        background-color: #607d8b;
+        color: white;
+        border: none;
+        box-shadow: 0 10px 30px rgba(96, 125, 139, 0.4);
+    }
+
+    .btn-secondary:hover {
+        background-color: #546e7a;
+        transform: scale(1.05);
+    }
+
+    .profile-section {
+        padding: 20px;
+    }
+
+    /* Neumorphism Effect */
+    .profile-section p {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        padding: 10px;
+        border-radius: 10px;
+        transition: all 0.3s;
+    }
+
+    .profile-section p:hover {
+        transform: scale(1.02);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Smooth Page Load Animation */
+    @keyframes fadeIn {
+        0% { transform: scale(0.8); opacity: 0; }
+        100% { transform: scale(1); opacity: 1; }
+    }
+
+</style>
+
+<div class="container">
+    <h2 class="text-center text-white mb-4">👤 Your Profile</h2>
+
+    <div class="card shadow">
+        <div class="card-body">
+            <div class="row">
+                <!-- ✅ User Profile Details -->
+                <div class="col-md-6 profile-section">
+                    <h5>🧑‍💻 Full Name</h5>
+                    <p>{{ user.full_name }}</p>
+
+                    <h5>📅 Date of Birth (DOB)</h5>
+                    <p>{{ user.dob }}</p>
+
+                    <h5>🎓 Qualification</h5>
+                    <p>{{ user.qualification }}</p>
+
+                    <h5>📧 Email Address</h5>
+                    <p>{{ user.email }}</p>
+
+                    <h5>🆔 User ID</h5>
+                    <p>{{ user.id }}</p>
+                </div>
+
+                <!-- ✅ Buttons Section -->
+                <div class="col-md-6 text-center">
+                    <a href="{{ url_for('edit_profile') }}" class="btn btn-warning w-75 mb-3">
+                        ✏️ Edit Profile
+                    </a>
+
+                    <a href="{{ url_for('user_dashboard') }}" class="btn btn-secondary w-75">
+                        ⬅️ Back to Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

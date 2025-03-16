@@ -1,0 +1,202 @@
+{% extends "base.html" %}
+
+{% block title %} Edit Quiz - Quiz Master {% endblock %}
+
+{% block content %}
+<style>
+    body {
+        background-image: url('https://source.unsplash.com/1600x900/?quiz,learning');
+        background-size: cover;
+        background-position: center;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .container {
+        max-width: 800px;
+        margin-top: 40px;
+    }
+
+    .card {
+        background-color: rgba(255, 255, 255, 0.9);
+        border-radius: 15px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s;
+    }
+
+    .card:hover {
+        transform: scale(1.02);
+    }
+
+    .card-header {
+        background-color: #673ab7;
+        color: white;
+        border-radius: 15px 15px 0 0;
+        text-align: center;
+        font-weight: bold;
+    }
+
+    .form-control {
+        border-radius: 8px;
+        padding: 12px;
+    }
+
+    textarea {
+        resize: none;
+        height: 100px;
+    }
+
+    textarea:focus, input:focus {
+        box-shadow: 0 10px 30px rgba(103, 58, 183, 0.3);
+        border-color: #673ab7;
+        transform: scale(1.01);
+    }
+
+    #quiz-title-preview {
+        background-color: #f3e5f5;
+        border-left: 5px solid #673ab7;
+        padding: 15px;
+        border-radius: 10px;
+        font-size: 18px;
+        font-weight: bold;
+        color: #333;
+        transition: all 0.3s;
+    }
+
+    #quiz-title-preview:hover {
+        background-color: #ede7f6;
+        transform: scale(1.01);
+    }
+
+    .btn-success {
+        background-color: #4caf50;
+        border: none;
+        border-radius: 25px;
+        padding: 12px 40px;
+        font-size: 18px;
+        transition: all 0.3s;
+    }
+
+    .btn-success:hover {
+        background-color: #388e3c;
+        transform: scale(1.05);
+        box-shadow: 0 10px 30px rgba(76, 175, 80, 0.4);
+    }
+
+    .btn-secondary {
+        border-radius: 25px;
+        padding: 12px 30px;
+        font-size: 18px;
+    }
+
+    #time-preview {
+        background-color: #e3f2fd;
+        border-left: 5px solid #1976d2;
+        padding: 15px;
+        border-radius: 10px;
+        font-size: 16px;
+        color: #333;
+    }
+
+    #char-count {
+        font-size: 14px;
+        color: #888;
+        float: right;
+    }
+</style>
+
+<div class="container">
+    <div class="card shadow-lg border-0 rounded">
+        <div class="card-header">
+            📜 Edit Quiz
+        </div>
+        <div class="card-body">
+            <form method="POST">
+                
+                <!-- Quiz Title -->
+                <div class="mb-3">
+                    <label for="title" class="form-label">Quiz Title</label>
+                    <input type="text" class="form-control" id="title" name="title" value="{{ quiz.title }}" required oninput="updateTitlePreview()">
+                </div>
+
+                <!-- Live Quiz Title Preview -->
+                <div class="mb-4">
+                    <h6>📢 Live Quiz Title Preview:</h6>
+                    <div id="quiz-title-preview">
+                        {{ quiz.title }}
+                    </div>
+                </div>
+
+                <!-- Description -->
+                <div class="mb-3">
+                    <label for="description" class="form-label">Description</label>
+                    <textarea class="form-control" id="description" name="description" rows="3" required oninput="countChars()">{{ quiz.description }}</textarea>
+                    <small id="char-count">0/300 characters</small>
+                </div>
+
+                <!-- Time Duration -->
+                <div class="mb-3">
+                    <label for="time_duration" class="form-label">Time Duration (in minutes)</label>
+                    <input type="number" class="form-control" id="time_duration" name="time_duration" value="{{ quiz.time_duration }}" required oninput="updateTimePreview()">
+                </div>
+
+                <!-- Time Duration Preview -->
+                <div class="mb-4">
+                    <h6>⏱ Estimated Time Duration:</h6>
+                    <div id="time-preview">
+                        {{ quiz.time_duration }} minutes (Approx: {{ quiz.time_duration // 60 }} hr {{ quiz.time_duration % 60 }} min)
+                    </div>
+                </div>
+
+                <!-- Buttons -->
+                <div class="text-center">
+                    <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary me-2">❌ Cancel</a>
+                    <button type="submit" class="btn btn-success">💾 Update Quiz</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Live Quiz Title Preview
+    function updateTitlePreview() {
+        const title = document.getElementById('title').value;
+        document.getElementById('quiz-title-preview').innerText = title;
+    }
+
+    // Time Duration Preview
+    function updateTimePreview() {
+        const time = document.getElementById('time_duration').value;
+        const hours = Math.floor(time / 60);
+        const minutes = time % 60;
+        let timeText = `${time} minutes`;
+
+        if (hours > 0) {
+            timeText += ` (Approx: ${hours} hr ${minutes} min)`;
+        }
+
+        document.getElementById('time-preview').innerText = timeText;
+    }
+
+    // Character Counter for Description
+    function countChars() {
+        const description = document.getElementById('description').value;
+        const charCount = description.length;
+        document.getElementById('char-count').innerText = `${charCount}/300 characters`;
+
+        if (charCount > 300) {
+            document.getElementById('char-count').style.color = "red";
+        } else {
+            document.getElementById('char-count').style.color = "#888";
+        }
+    }
+
+    // Initialize on load
+    window.onload = function () {
+        updateTitlePreview();
+        updateTimePreview();
+        countChars();
+    }
+</script>
+
+{% endblock %}

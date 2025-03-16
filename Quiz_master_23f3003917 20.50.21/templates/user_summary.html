@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    body {
+        background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .container {
+        margin-top: 50px;
+    }
+
+    .card {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        transition: all 0.3s;
+    }
+
+    .card:hover {
+        transform: scale(1.05);
+        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.2);
+    }
+
+    .card h5 {
+        color: #fff;
+        font-size: 18px;
+        margin-bottom: 5px;
+    }
+
+    .card h3 {
+        color: #f8f9fa;
+        font-size: 24px;
+        font-weight: bold;
+    }
+
+    .btn-secondary {
+        background-color: #607d8b;
+        color: white;
+        border: none;
+        border-radius: 50px;
+        padding: 12px 30px;
+        transition: all 0.3s;
+    }
+
+    .btn-secondary:hover {
+        background-color: #546e7a;
+        transform: scale(1.05);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    #quiz-chart {
+        height: 400px;
+    }
+
+    /* Smooth Page Animation */
+    @keyframes fadeIn {
+        0% { opacity: 0; transform: scale(0.8); }
+        100% { opacity: 1; transform: scale(1); }
+    }
+
+    .card {
+        animation: fadeIn 1s ease-in-out;
+    }
+
+</style>
+
+<div class="container">
+    <h2 class="text-center text-white mb-4">📊 Your Quiz Summary</h2>
+
+    <!-- ✅ Summary Cards -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <h5 class="card-title">✅ Total Attempted Quizzes</h5>
+                    <h3>{{ total_attempted_quizzes }}</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <h5 class="card-title">🏆 Total Score Obtained</h5>
+                    <h3>{{ total_score }}</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <h5 class="card-title">📊 Average Score</h5>
+                    <h3>{{ (total_score / total_attempted_quizzes) | round(2) if total_attempted_quizzes > 0 else 0 }}</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ✅ Render the Plotly Chart -->
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title text-center mb-3">📊 Quiz Attempts Per Subject</h5>
+            <div id="quiz-chart"></div>
+        </div>
+    </div>
+
+    <!-- ✅ Back to Dashboard Button -->
+    <div class="text-center mt-4">
+        <a href="{{ url_for('user_dashboard') }}" class="btn btn-secondary">
+            ⬅️ Back to Dashboard
+        </a>
+    </div>
+</div>
+
+<!-- ✅ Embed the Plotly Chart -->
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script>
+    var graphJSON = {{ graph_json|safe }};
+    Plotly.newPlot('quiz-chart', graphJSON.data, graphJSON.layout, {responsive: true});
+</script>
+
+{% endblock %}
